@@ -1,0 +1,140 @@
+.\" Copyright (c) 2024 Roger Hunen
+.\" All rights reserved.
+.\"
+.TH TZSP2PCAPNG 8  "25 July 2025"
+.SH NAME
+tzsp2pcapng \- TZSP (TaZmen Sniffer Protocol) stream to PcapNG converter
+.SH SYNOPSIS
+.na
+.B tzsp2pcapng
+[
+.B \-fhPvz
+]
+[
+.B \-C
+.I rotate_bytes
+]
+[
+.B \-F
+.I ip_address
+]
+[
+.B \-G
+.I rotate_seconds
+]
+[
+.B \-H
+.I hardware
+]
+.br
+.ti +12
+[
+.B \-I
+.I interface
+]
+[
+.B \-O
+.I operating_system
+]
+[
+.B \-p
+.I port
+]
+[
+.B \-w
+.I file
+]
+[
+.B \-z
+.I command
+]
+.br
+.ad
+.SH DESCRIPTION
+.LP
+\fITzsp2pcapng\fP receives a TZSP (TazMen Sniffer Protocol) stream of packets
+from a remote sniffer and converts the packets to  PcapNG (or Pcap) formatted
+data. The TZSP encapsulation is stripped. \fITzsp2pcapng\fP continues to receive
+and convert packets until it is interrupted by SIGINT or SIGTERM.
+.SH OPTIONS
+.TP
+.BI \-C " file_size"
+After writing a packet to a savefile, check whether the file is currently
+larger than \fIfile_size\fP and, if so, close the current file and open a new
+one.  Files after the first savefile will have the name specified with the
+\fB-w\fP flag, with a number after it, starting at 1 and continuing upward.
+The unit of \fIfile_size\fP is bytes.
+.TP
+.B \-f
+Flush the output after each packet written. Using this flag may negatively
+affect performance.
+.TP
+.BI \-F " ip_address"
+Accept TZSP messages only from \fIip_address\fP. The default is to accept
+TZSP traffic from any IP address.
+.TP
+.BI \-G " file_age"
+After writing a packet to a savefile, check whether the file is currently
+older than \fIfile_age\fP and, if so, close the current file and open a new
+one. Files after the first savefile will have the name specified with the
+\fB-w\fP flag, with a number after it, starting at 1 and continuing upward.
+The unit of \fIfile_age\fP is seconds.
+.TP
+.B \-h
+Print program name, program version and basic usage to \fIstderr\fP and exit.
+.TP
+.BI \-H " hardware"
+Set the hardware option in the PcapNG Section Header Block, for example to
+characterize the hardware of the remote sniffer. The default value is the
+\fImodel name\fP value from \fI/proc/cpuinfo\fP. This flag cannot be used
+with the \fB-P\fP flag.
+.TP
+.BI \-I " interface"
+Set the description option in the PcapNG Interface Description Block, for
+example to characterize the capturing interface of the remote sniffer. The
+default value is \fIEthernet\fP. This flag cannot be used with the \fB-P\fP
+flag.
+.TP
+.B \-O
+Set the operating system option in the PcapNG Section Header Block, for
+example to characterize the operating system of the remote sniffer. The
+default value is a string composed from local system data returned by
+\fBuname\fP(2). This flag cannot be used with the \fB-P\fP flag.
+.TP
+.BI \-p " port"
+Receive TZSP messages on UDP \fIport\fP. The default UDP port is 37008.
+.TP
+.B \-P
+Format output data as Pcap instead of PcapNG. This flag disables the
+\fB-H\fP, \fB-I\fP and \fB-O\fP flags.
+.TP
+.B \-v
+Print verbose output on \fIstderr\fP.
+.TP
+.BI \-w " file"
+Write packet data to \fIfile\fP. The default is to write the packet data
+to \fIstdout\fP.
+.TP
+.BI \-z " command"
+Used in conjunction with the \fB-C\fP or \fB-G\fP flags, this will make
+\fItzsp2pcapng\fP run "\fIcommand file\fP" where file is the savefile being
+closed after each rotation. For example, specifying \fB-z gzip\fP or
+\fB-z bzip2\fP will compress each savefile using gzip or bzip2.
+.IP
+Note that \fItzsp2pcapng\fP will run the command in parallel to the capture,
+using the lowest priority so that this doesn't disturb packet processing.
+In case you would like to use a command that itself takes flags or different
+arguments, you can write a shell script that will take the savefile name as
+the only argument, make the flags & arguments arrangements and execute the
+command that you want.
+.SH "SEE ALSO"
+.BR tcpdump (8)
+.SH AUTHORS
+\fITzsp2pcapng\fP was written by Roger Hunen, developed from original code
+by Andrew Childs.
+.SH CAVEATS
+The current version of \fItzsp2pcapng\fP only supports Ethernet (link layer
+type 1). Packet timestamps reflect the time when \fItzsp2pcapng\fP received
+the TZSP message, not the time when the remote sniffer captured the packet.
+\fITzsp2pcapng\fP has only been tested with MikroTik RouterOS 7 as a remote
+sniffer.
