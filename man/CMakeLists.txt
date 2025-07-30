@@ -6,22 +6,26 @@ set(MAN8_PAGES_GZ
   tzsp2pcapng.8.gz
 )
 
-set(TARGET_NAME tzsp2pcapng_man)
+set(MAN_INSTALL_DIR local/share/man)  # You can adjust this or pass from top CMakeLists.txt
 
-add_custom_target(
-  ${TARGET_NAME}
-  ALL
-  DEPENDS ${MAN8_PAGES}
-)
-
+# Custom command to gzip the man page
 add_custom_command(
-  TARGET             ${TARGET_NAME}
-  WORKING_DIRECTORY  ${CMAKE_CURRENT_LIST_DIR}
-  COMMAND            gzip -f -k ${MAN8_PAGES}
-  OUTPUTS            ${MAN8_PAGES_GZ}
+  OUTPUT ${MAN8_PAGES_GZ}
+  COMMAND gzip -f -k ${MAN8_PAGES}
+  DEPENDS ${MAN8_PAGES}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  COMMENT "Compressing man page ${MAN8_PAGES} to ${MAN8_PAGES_GZ}"
+  VERBATIM
 )
 
+# Custom target that depends on the compressed man page
+add_custom_target(
+  ${TARGET_NAME} ALL
+  DEPENDS ${MAN8_PAGES_GZ}
+)
+
+# Install the gzipped man page
 install(
-  FILES        ${MAN8_PAGES_GZ}
-  DESTINATION  ${MAN_INSTALL_DIR}/man8
+  FILES ${MAN8_PAGES_GZ}
+  DESTINATION ${MAN_INSTALL_DIR}/man8
 )
