@@ -28,6 +28,21 @@ Options:
 
 Run `man tzsp2pcapng` after installation for detailed usage information.
 
+# Building and packaging
+
+The basic workflow to build and package *tzsp2pcapng* is
+```
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+$ cpack
+```
+
+On platforms that have *dpkg* (Debian Linux and its derivatives) cpack creates a
+Debian package (.deb) by default. On other platforms cpack creates a gzipped tar
+archive (.tar.gz).
+
 # Author
 
 Roger Hunen

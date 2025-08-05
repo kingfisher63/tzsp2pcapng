@@ -30,4 +30,4 @@ target_compile_definitions(${TARGET_NAME} PRIVATE PROGRAM_NAME="${OUTPUT_NAME}" 
 target_compile_options    (${TARGET_NAME} PRIVATE ${COMPILE_OPTIONS})
 target_link_options       (${TARGET_NAME} PRIVATE LINKER:${LINK_OPTIONS} -rdynamic)
 
-install(TARGETS ${TARGET_NAME} DESTINATION ${PROG_INSTALL_DIR})
+install(TARGETS ${TARGET_NAME} DESTINATION ${EXE_INSTALL_DIR})
